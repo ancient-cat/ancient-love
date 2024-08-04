@@ -4,14 +4,29 @@
       "target": "ESNext",
       "lib": ["ESNext"],
       "moduleResolution": "Node",
-      "types": [],
+      "types": [
+        "lua-types/jit",
+        "love-typescript-definitions",
+        "@typescript-to-lua/language-extensions"
+    ],
+      "resolveJsonModule": true,
       "strict": true
     },
-    "files": ["main.ts"],
+    "exclude": [
+        "node_modules/*/**",
+        ".git"
+    ],
+    "include": [
+      "src/**/*"
+    ],
+
     "tstl": {
         "noImplicitGlobalVariables": true,
         "buildMode": "default",
         "noImplicitSelf": true,
-        "luaTarget": "5.4"
+        "luaTarget": "JIT",
+        "luaBundle": "build/main.lua",
+        "luaBundleEntry": "src/main.ts",
+        "sourceMapTraceback": true
     }
   }

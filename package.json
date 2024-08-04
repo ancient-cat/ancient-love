@@ -1,0 +1,21 @@
+{
+  "name": "love-with-typescript",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "build": "tstl",
+    "dev": "tstl --watch"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@eslint/js": "^9.8.0",
+    "@types/eslint__js": "^8.42.3",
+    "eslint": "^9.8.0",
+    "typescript": "5.5.2",
+    "typescript-eslint": "^8.0.0",
+    "typescript-to-lua": "^1.26.2"
+  }
+}

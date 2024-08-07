@@ -1,13 +1,24 @@
-import { test } from "./test"
+import { Scenes } from "./core/scene";
+import main_menu from "./scenes/main_menu"
+import console_test from "./scenes/console_test"
+import console from "./core/console"
+import { GameTime } from "./core/timer";
 
-love.load = () => {
-    print(test)
-    const [content] = love.filesystem.read("res/test.txt");
-    print(content);
-  };
-  
+
+love.load = async () => {
+    console.log("Loading !")
+    Scenes.switch(console_test);
+};
+
+love.update = (dt: number) => {
+    GameTime.update(dt);
+    Scenes.update(dt);
+}
+
+love.keypressed = (key: string) => Scenes.keypress(key);
+
 love.draw = () => {
-    love.graphics.print("Hello World!", 400, 300);
+    Scenes.draw();
 };
 
 

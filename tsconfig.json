@@ -1,32 +1,23 @@
 {
-    "$schema": "https://raw.githubusercontent.com/TypeScriptToLua/TypeScriptToLua/master/tsconfig-schema.json",
-    "compilerOptions": {
-      "target": "ESNext",
-      "lib": ["ESNext"],
-      "moduleResolution": "Node",
-      "types": [
-        "lua-types/jit",
-        "love-typescript-definitions",
-        "@typescript-to-lua/language-extensions"
-    ],
-      "resolveJsonModule": true,
-      "strict": true
-    },
-    "exclude": [
-        "node_modules/*/**",
-        ".git"
-    ],
-    "include": [
-      "src/**/*"
-    ],
+  "$schema": "https://raw.githubusercontent.com/TypeScriptToLua/TypeScriptToLua/master/tsconfig-schema.json",
+  "compilerOptions": {
+    "target": "ESNext",
+    "lib": ["ESNext"],
+    "moduleResolution": "Node",
+    "types": ["lua-types/jit", "love-typescript-definitions", "@typescript-to-lua/language-extensions"],
+    "resolveJsonModule": true,
+    "strict": true
+  },
+  "exclude": ["node_modules/*/**", ".git"],
+  "include": ["src/**/*"],
 
-    "tstl": {
-        "noImplicitGlobalVariables": true,
-        "buildMode": "default",
-        "noImplicitSelf": true,
-        "luaTarget": "JIT",
-        "luaBundle": "build/main.lua",
-        "luaBundleEntry": "src/main.ts",
-        "sourceMapTraceback": true
-    }
+  "tstl": {
+    "noImplicitGlobalVariables": true,
+    "buildMode": "default",
+    "noImplicitSelf": true,
+    "luaTarget": "JIT",
+    "luaBundle": "build/main.lua",
+    "luaBundleEntry": "src/main.ts",
+    "sourceMapTraceback": true
   }
+}

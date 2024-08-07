@@ -1,15 +1,10 @@
 import { Scenes } from "../core/scene";
 
 const main_menu = Scenes.create({
-    name: "Main Menu",
-    update(dt) {
-        
-    },
+  name: "Main Menu",
+  update(dt) {},
 
-    draw() {
-        
-    },
-})
-
+  draw() {},
+});
 
 export default main_menu;

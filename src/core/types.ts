@@ -1,13 +1,10 @@
-
-
 export type LoveDrawn = {
-    draw: () => void;
-}
+  draw: () => void;
+};
 export type LoveTicked = {
-    update: (dt: number) => void;
-}
+  update: (dt: number) => void;
+};
 export type LoveLifecycle = LoveDrawn & LoveTicked;
-
 
 export type Milliseconds = number;
 export type Seconds = number;

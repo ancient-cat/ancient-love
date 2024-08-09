@@ -6,7 +6,7 @@
 -   [x] scene
 -   [x] ECS
 -   [x] timer
--   [ ] signals
+-   [x] signals
 -   [ ] collisions
 -   [ ] tween / animation
 -   [ ] color

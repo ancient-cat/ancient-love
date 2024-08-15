@@ -7,8 +7,9 @@
 -   [x] ECS
 -   [x] timer
 -   [x] signals
--   [ ] collisions
+-   [x] rudimentary collisions
 -   [ ] tween / animation
 -   [ ] color
 -   [ ] world / camera
+-   [ ] advanced collisions
 -   [ ] controller / input mapping

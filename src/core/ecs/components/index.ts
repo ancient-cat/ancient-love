@@ -1,4 +1,6 @@
-import { Milliseconds, Seconds } from "../types";
+import { Milliseconds, Seconds } from "../../types";
+
+export * from "./collider";
 
 export type GameTimeComponent = {
     type: "gametime";

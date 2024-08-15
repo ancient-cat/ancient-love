@@ -1,16 +1,16 @@
-type Point = {
+export type Point = {
     x: number;
     y: number;
 };
 
-type Box = {
+export type Box = {
     x: number;
     y: number;
     w: number;
     h: number;
 };
 
-type AABB = {
+export type AABB = {
     x: number;
     y: number;
     dx: number;

@@ -1,7 +1,7 @@
-import console from "../core/console";
-import { Scenes } from "../core/scene";
-import { createSignal } from "../core/signal";
-import { GameTime } from "../core/systems/timer";
+import console from "../../core/console";
+import { Scenes } from "../../core/scene";
+import { createSignal } from "../../core/signal";
+import { GameTime } from "../../core/systems/timer";
 
 let last_pressed: string | null = null;
 

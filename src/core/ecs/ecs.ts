@@ -6,6 +6,7 @@ import {
     DrawComponent,
     GameTimeComponent,
     ShootComponent,
+    ColliderComponent,
 } from "./components";
 
 export type Entity = unknown;
@@ -15,7 +16,8 @@ export type ComponentType =
     | VelocityComponent
     | DrawComponent
     | GameTimeComponent
-    | ShootComponent;
+    | ShootComponent
+    | ColliderComponent;
 
 // use an interface -- it handles overlaps in the way we want
 export type ComponentRecord = {
@@ -25,6 +27,7 @@ export type ComponentRecord = {
     draw?: DrawComponent;
     gametime?: GameTimeComponent;
     shoot?: ShootComponent;
+    collider?: ColliderComponent;
 };
 
 export type Component = keyof ComponentRecord;
@@ -76,6 +79,12 @@ export type EntityComponentManager = {
      * Retrieve the Components assocaited to an Entity
      */
     get: (entity: Entity) => ComponentRecord;
+    /**
+     * Similar to "get", but asserts the entity has specific components
+     */
+    tap: <AssertedKeys extends keyof ComponentRecord>(
+        entity: Entity
+    ) => QueriedComponentRecord<AssertedKeys>;
 };
 
 const map = new Map<Entity, ComponentRecord>();
@@ -91,6 +100,7 @@ export const ECS: EntityComponentManager = {
             position: undefined,
             shoot: undefined,
             velocity: undefined,
+            collider: undefined,
         });
         return entity;
     },
@@ -119,6 +129,8 @@ export const ECS: EntityComponentManager = {
             record.gametime = component;
         } else if (component.type === "shoot") {
             record.shoot = component;
+        } else if (component.type === "collider") {
+            record.collider = component;
         } else {
             const _exhausted: never = component;
         }
@@ -146,6 +158,11 @@ export const ECS: EntityComponentManager = {
     },
     get: (entity: Entity) => {
         const result: ComponentRecord = assert(map.get(entity));
+        return result;
+    },
+
+    tap: <AssertedKeys extends keyof ComponentRecord>(entity: Entity) => {
+        const result = map.get(entity) as QueriedComponentRecord<AssertedKeys>;
         return result;
     },
 };

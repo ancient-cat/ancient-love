@@ -1,21 +1,13 @@
 import { Scenes } from "./core/scene";
-import main_menu from "./scenes/main_menu";
-import console_test from "./scenes/console_test";
+
 import console from "./core/console";
 import { GameTime } from "./core/systems/timer";
-import { ECS } from "./core/ecs";
 
-import { player } from "./core/entities";
+import collisions_test from "./scenes/test/collisions";
 
 love.load = async () => {
     console.log("Loading !");
-    Scenes.switch(console_test);
-
-    ECS.addComponent(player, {
-        type: "position",
-        x: 50,
-        y: 50,
-    });
+    Scenes.switch(collisions_test);
 };
 
 love.update = (dt: number) => {

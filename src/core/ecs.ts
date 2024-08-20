@@ -61,7 +61,6 @@ const ECS: EntityComponentManager = {
   },
 
   delete: function (entity: Entity): void {
-    assert(map.has(entity), "Attempting to delete non-existant entity");
     map.delete(entity);
   },
 

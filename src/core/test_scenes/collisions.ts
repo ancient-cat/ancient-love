@@ -1,7 +1,7 @@
-import console from "../../core/console";
+import console from "../console";
 
-import { Scenes } from "../../core/scene";
-import { createCollisionSystem } from "../../core/systems/collisions";
+import { Scenes } from "../scene";
+import { createCollisionSystem } from "../systems/collisions";
 import { ECS } from "../../ecs";
 import { CollisionGroup, CollisionNotifier } from "../../ecs/components/collider";
 
@@ -40,22 +40,10 @@ const collisions_test = Scenes.create({
   enter: () => {},
   draw: () => {
     love.graphics.setColor(0.8, 0.1, 0.1);
-    love.graphics.rectangle(
-      "line",
-      player_with_components.collider.x,
-      player_with_components.collider.y,
-      player_with_components.collider.w,
-      player_with_components.collider.h
-    );
+    love.graphics.rectangle("line", player_with_components.collider.x, player_with_components.collider.y, player_with_components.collider.w, player_with_components.collider.h);
 
     love.graphics.setColor(0.2, 0.2, 0.5);
-    love.graphics.rectangle(
-      "line",
-      enemy_with_components.collider.x,
-      enemy_with_components.collider.y,
-      enemy_with_components.collider.w,
-      enemy_with_components.collider.h
-    );
+    love.graphics.rectangle("line", enemy_with_components.collider.x, enemy_with_components.collider.y, enemy_with_components.collider.w, enemy_with_components.collider.h);
   },
   keypress: (key: string) => {
     console.log(key);

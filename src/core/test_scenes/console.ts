@@ -1,7 +1,7 @@
-import console from "../../core/console";
-import { create_event_dispatcher } from "../../core/dispatcher";
-import { Scenes } from "../../core/scene";
-import { GameTime } from "../../core/systems/timer";
+import console from "../console";
+import { create_event_dispatcher } from "../dispatcher";
+import { Scenes } from "../scene";
+import { GameTime } from "../systems/timer";
 
 let last_pressed: string | null = null;
 

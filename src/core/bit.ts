@@ -3,5 +3,5 @@
  */
 
 export const has = (mask: number, value: number) => {
-    return (value & mask) !== 0;
+  return (value & mask) !== 0;
 };

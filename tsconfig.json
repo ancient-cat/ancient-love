@@ -10,14 +10,14 @@
   },
   "exclude": ["node_modules/*/**", ".git"],
   "include": ["src/**/*"],
-
   "tstl": {
-    "noImplicitGlobalVariables": true,
+    "noImplicitGlobalVariables": false,
     "buildMode": "default",
     "noImplicitSelf": true,
     "luaTarget": "JIT",
     "luaBundle": "build/main.lua",
     "luaBundleEntry": "src/main.ts",
-    "sourceMapTraceback": true
+    "sourceMapTraceback": true,
+    "luaLibImport": "require"
   }
 }

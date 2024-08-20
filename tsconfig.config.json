@@ -1,0 +1,16 @@
+{
+  "extends": ["./tsconfig.json"],
+  "$schema": "https://raw.githubusercontent.com/TypeScriptToLua/TypeScriptToLua/master/tsconfig-schema.json",
+
+  "include": ["src/config.ts"],
+  "tstl": {
+    "noImplicitGlobalVariables": false,
+    "buildMode": "default",
+    "noImplicitSelf": true,
+    "luaTarget": "JIT",
+    "luaBundle": "build/conf.lua",
+    "luaBundleEntry": "src/config.ts",
+    "sourceMapTraceback": true,
+    "luaLibImport": "require-minimal"
+  }
+}

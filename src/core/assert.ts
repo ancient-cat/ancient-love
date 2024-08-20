@@ -1,6 +1,3 @@
-export function assertion(
-    condition: boolean,
-    message?: string
-): asserts condition {
-    assert(condition, message);
+export function assertion(condition: boolean, message?: string): asserts condition {
+  assert(condition, message);
 }

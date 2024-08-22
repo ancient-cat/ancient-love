@@ -9,7 +9,7 @@ const events = create_event_dispatcher();
 
 const console_test = Scenes.create({
   name: "Console Test",
-
+  state: undefined,
   enter: () => {
     console.log("hello", { test: "test", dog: { bark: function () {} } }, [1, 2, 3]);
     console.log(null, 1, true, false);
@@ -27,7 +27,7 @@ const console_test = Scenes.create({
     });
   },
 
-  keypress: async (key: string) => {
+  keypressed: async (key: string) => {
     last_pressed = key;
     events.emit("keypress", last_pressed);
 

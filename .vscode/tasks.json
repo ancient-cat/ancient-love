@@ -17,7 +17,8 @@
         "clear": false
       },
       "runOptions": {
-        "instanceLimit": 1
+        "instanceLimit": 1,
+        "reevaluateOnRerun": true
       }
     }
   ]

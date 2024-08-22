@@ -37,6 +37,7 @@ const collision_system = createCollisionSystem();
 
 const collisions_test = Scenes.create({
   name: "collisions_test",
+  state: undefined,
   enter: () => {},
   draw: () => {
     love.graphics.setColor(0.8, 0.1, 0.1);
@@ -45,7 +46,7 @@ const collisions_test = Scenes.create({
     love.graphics.setColor(0.2, 0.2, 0.5);
     love.graphics.rectangle("line", enemy_with_components.collider.x, enemy_with_components.collider.y, enemy_with_components.collider.w, enemy_with_components.collider.h);
   },
-  keypress: (key: string) => {
+  keypressed: (key: string) => {
     console.log(key);
     if (key === "up") {
     }

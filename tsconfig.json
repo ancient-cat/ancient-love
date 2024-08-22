@@ -6,7 +6,8 @@
     "moduleResolution": "Node",
     "types": ["lua-types/jit", "love-typescript-definitions", "@typescript-to-lua/language-extensions"],
     "resolveJsonModule": true,
-    "strict": true
+    "strict": true,
+    "allowArbitraryExtensions": true
   },
   "exclude": ["node_modules/*/**", ".git"],
   "include": ["src/**/*"],

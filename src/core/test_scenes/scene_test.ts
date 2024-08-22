@@ -200,7 +200,7 @@ const scene_test = Scenes.create({
     // love.graphics.draw(canvas);
 
     const steps = 10;
-    love.graphics.setColor(1, 1, 0.2, 0.11);
+    love.graphics.setColor(1, 0.5, 0.2, 0.11);
     love.graphics.rectangle("fill", player.x, player.y, player.w, player.h);
     for (let i = 0; i < steps; i++) {
       love.graphics.rectangle("fill", player.x, player.y, player.w, (player.h * (100 / steps)) / 100);

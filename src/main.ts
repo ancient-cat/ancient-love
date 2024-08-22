@@ -1,3 +1,8 @@
+import lume from "./lib/lume";
+
+// import lurker from "./lib/lurker";
+import lurker from "lurker";
+
 import { Scenes } from "./core/scene";
 
 import console from "./core/console";
@@ -9,7 +14,10 @@ import collisions_test from "./core/test_scenes/collisions";
 import main_menu from "./scenes/main_menu";
 import scene_test from "./core/test_scenes/scene_test";
 
+lurker.preswap = (f) => f === "lualib_bundle.lua";
+
 love.load = () => {
+  console.log("hi?");
   Scenes.switch(scene_test);
 
   game_events.on("quit", () => {
@@ -26,6 +34,7 @@ love.load = () => {
 love.update = (dt: number) => {
   GameTime.update(dt);
   Scenes.update(dt);
+  lurker.update();
 };
 
 love.keypressed = (key, scancode, isrepeat) => {

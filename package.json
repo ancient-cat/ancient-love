@@ -34,5 +34,8 @@
     "typescript": "5.5.2",
     "typescript-eslint": "^8.0.0",
     "typescript-to-lua": "^1.26.2"
+  },
+  "dependencies": {
+    "lurker": "file:packages/lurker"
   }
 }

@@ -6,11 +6,11 @@ import { Scenes } from "./core/scene";
 import { game_events } from "./game";
 
 import scene_test from "./core/test_scenes/scene_test";
+import { GameTime } from "./core/systems/timer";
 
 // Setting love handlers before initialize will make it a "global" handler
 // Global handlers will be called in-addition-to the Scene handlers
 love.load = (arg: string[]) => {
-
   Scenes.switch(scene_test);
 
   game_events.on("quit", () => {
@@ -25,7 +25,10 @@ love.load = (arg: string[]) => {
 };
 
 // Global Update things happen here
-love.update = (dt: number) => {};
+love.update = (dt: number) => {
+  GameTime.update(dt);
+  Scenes.update(dt);
+};
 
 love.keypressed = (key, scancode, isrepeat) => {
   if (key === "escape") {

@@ -1,37 +1,5 @@
 import { Canvas } from "love.graphics";
-import console from "../console";
-import { create_event_dispatcher } from "../dispatcher";
 import { Scene, Scenes, get_modes } from "../scene";
-import { GameTime } from "../systems/timer";
-
-interface Point {
-  x: number;
-  y: number;
-}
-
-/**
- * Generate points along a quadratic Bézier curve
- * @param start - The starting point of the curve
- * @param control - The control point of the curve
- * @param end - The ending point of the curve
- * @param segments - The number of segments to approximate the curve
- * @returns An array of [x, y] coordinates representing the curve
- */
-function getBezierPoints(start: Point, control: Point, end: Point, segments: number): [number, number][] {
-  const points: [number, number][] = [];
-
-  for (let i = 0; i <= segments; i++) {
-    const t = i / segments;
-
-    // Quadratic Bézier formula
-    const x = (1 - t) * (1 - t) * start.x + 2 * (1 - t) * t * control.x + t * t * end.x;
-    const y = (1 - t) * (1 - t) * start.y + 2 * (1 - t) * t * control.y + t * t * end.y;
-
-    points.push([x, y]);
-  }
-
-  return points;
-}
 
 type Grass = {
   x: number;
@@ -70,38 +38,6 @@ function calc_points() {
       sway_direction: 1,
     };
   }
-}
-function create_bg(): void {
-  // Create a new canvas with the dimensions 800x600
-  const [w, h] = love.graphics.getDimensions();
-  canvas = love.graphics.newCanvas(w, h);
-
-  // Set the canvas as the active target for drawing
-  love.graphics.setCanvas(canvas);
-
-  // Clear the canvas
-  love.graphics.clear();
-  love.graphics.setBackgroundColor(0.1, 0.4, 0.2, 1);
-
-  // Set the drawing color to white
-
-  if (grass.length === 0) {
-    calc_points();
-  }
-
-  love.graphics.setColor(0.3, 0.6, 0.4, 1);
-
-  grass.forEach(({ x, y, height, x_sway, r, g, b }) => {
-    // love.graphics.setColor(...color);
-    love.graphics.line(x + (x_sway - x_sway_range), y, x, y + height);
-  });
-  // Generate random points on the canvas
-
-  // Reset to the default canvas (the screen)
-  love.graphics.setCanvas();
-
-  // Reset the color to white (optional)
-  love.graphics.setColor(1, 1, 1, 1);
 }
 
 function draw_grass() {

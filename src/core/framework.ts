@@ -6,52 +6,48 @@ import { GameTime } from "./systems/timer";
 import { Scenes } from "./scene";
 import console from "./console";
 
+declare global {
+  export const arg: readonly string[];
+}
+
 let hot_module_reload: boolean = false;
 
 /** Initializes Scenes, scene handlers, and development mode features.
  * */
 export const initialize = () => {
-  old_load = love.load ?? (() => {});
-  old_update = love.update ?? (() => {});
-  let love_load_parms: {
-    arg: string[];
-    unfilteredArg: string[] | undefined;
-  };
+  const raw_args = Array.from(arg);
 
-  love.load = (arg: string[], unfilteredArg?: string[]) => {
-    love_load_parms = {
-      arg,
-      unfilteredArg,
-    };
-
-    hot_module_reload = arg.includes("--hmr");
-
-    Scenes.init();
-    old_load(arg, unfilteredArg);
-  };
+  hot_module_reload = raw_args.includes("--hmr");
 
   if (hot_module_reload) {
+    lurker.init();
+    lurker.lastscan = 0;
+
+    old_load = love.load ?? (() => {});
+    old_update = love.update ?? (() => {});
+
     console.log("HMR detected");
+    love.load = (arg: string[], unfilteredArg?: string[]) => {
+      Scenes.init();
+      old_load(arg, unfilteredArg);
+    };
+
     lurker.preswap = (f: string) => {
       if (f === "lualib_bundle.lua") return true;
       if (f === undefined) return true;
     };
+
     lurker.postswap = (file: string) => {
+      if (file.startsWith("scenes") || file.startsWith("core/test_scenes")) {
+        Scenes.init();
+      }
       if (love.load) {
-        love.load(love_load_parms.arg, love_load_parms.unfilteredArg);
+        old_load(love.arg.parseGameArguments(raw_args), raw_args);
       }
     };
     love.update = (dt: number) => {
-      GameTime.update(dt);
-      Scenes.update(dt);
       old_update(dt);
       lurker.update();
-    };
-  } else {
-    love.update = (dt: number) => {
-      GameTime.update(dt);
-      Scenes.update(dt);
-      old_update(dt);
     };
   }
 
@@ -85,6 +81,7 @@ export const initialize = () => {
   love.mousefocus = extend_existing_handler(love.mousefocus, Scenes.handlers.mousefocus);
   love.visible = extend_existing_handler(love.visible, Scenes.handlers.visible);
   love.lowmemory = extend_existing_handler(love.lowmemory, Scenes.handlers.lowmemory);
+  love.keypressed = extend_existing_handler(love.keypressed, Scenes.handlers.keypressed);
   love.keyreleased = extend_existing_handler(love.keyreleased, Scenes.handlers.keyreleased);
   love.textinput = extend_existing_handler(love.textinput, Scenes.handlers.textinput);
   love.filedropped = extend_existing_handler(love.filedropped, Scenes.handlers.filedropped);

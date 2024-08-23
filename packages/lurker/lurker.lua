@@ -220,7 +220,6 @@ function lurker.hotswapfile(file)
         lurker.exiterrorstate()
     end
 
-    lurker.print("before preswap f is " .. file)
     if lurker.preswap(file) then
         lurker.print("Hotswap of '{1}' aborted by preswap", { file })
         lurker.resetfile(file)
@@ -255,4 +254,4 @@ function lurker.scan()
     return changed
 end
 
-return lurker.init()
+return lurker;

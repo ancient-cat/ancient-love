@@ -194,20 +194,19 @@ const scene_test = Scenes.create({
   draw() {
     const { player } = scene_test.state;
 
-    love.graphics.setBackgroundColor(0.1, 0.4, 0.2, 1);
-    love.graphics.setColor(0.1, 0.6, 0.3, 1);
+    love.graphics.setBackgroundColor(0, 0.4, 0.2, 1);
+    love.graphics.setColor(0.5, 0.6, 0.3, 1);
     draw_grass();
-    // love.graphics.draw(canvas);
 
     const steps = 10;
-    love.graphics.setColor(1, 1, 0.2, 0.11);
+    love.graphics.setColor(1, 0, 0.5, 0.15);
     love.graphics.rectangle("fill", player.x, player.y, player.w, player.h);
     for (let i = 0; i < steps; i++) {
       love.graphics.rectangle("fill", player.x, player.y, player.w, (player.h * (100 / steps)) / 100);
     }
 
     const h = love.graphics.getHeight();
-    love.graphics.setColor(0, 0, 0, 0.2);
+    love.graphics.setColor(0, 0, 0, 0.25);
     love.graphics.rectangle("fill", 5, h - 225, 215, 210);
 
     love.graphics.setColor(1, 1, 1, 0.5);

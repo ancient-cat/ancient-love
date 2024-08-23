@@ -5,8 +5,28 @@
       "type": "npm",
       "script": "love",
       "problemMatcher": [],
-      "label": "npm: love",
+      "label": "Run game (npm:love)",
       "detail": "Runs love ./build",
+      "isBackground": true,
+      "presentation": {
+        "echo": true,
+        "reveal": "silent",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
+      },
+      "runOptions": {
+        "instanceLimit": 1,
+        "reevaluateOnRerun": true
+      }
+    },
+    {
+      "type": "npm",
+      "script": "hmr",
+      "problemMatcher": [],
+      "label": "Run game with live reload (npm:hmr)",
+      "detail": "Runs love ./build with hot module replacement",
       "isBackground": true,
       "presentation": {
         "echo": true,

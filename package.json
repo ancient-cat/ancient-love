@@ -1,8 +1,14 @@
 {
-  "name": "ancient-love",
-  "version": "1.0.0",
-  "main": "index.js",
+  "name": "@ancient-cat/ancient-love",
+  "description": "A set of tools on top of typescript2lua and love2d for building games",
+  "version": "0.1.0",
+  "main": "index",
   "type": "module",
+  "keywords": [
+    "typescript2lua",
+    "love2d",
+    "videogames"
+  ],
   "scripts": {
     "start": "npm run build && npm run love",
     "love": "love ./build",
@@ -15,9 +21,8 @@
     "format": "npx prettier --config=./prettier.config.js . --write",
     "format:check": "npx prettier --config=./prettier.config.js . --check"
   },
-  "author": "",
+  "author": "Rory Duncan",
   "license": "ISC",
-  "description": "",
   "devDependencies": {
     "@eslint/js": "^9.8.0",
     "@types/eslint__js": "^8.42.3",

@@ -14,7 +14,7 @@ export interface LurkerModule {
   lovefuncs: Record<string, Function>;
   state: "init" | "error" | "normal";
 
-  init(): typeof import("lurker");
+  init(): LurkerModule;
   print(...args: any[]): void;
   listdir(path: string, recursive: boolean, skipdotfiles: boolean): string[];
   initwrappers(): void;

@@ -8,7 +8,9 @@ import type { KeyConstant, Scancode } from "love.keyboard";
 import type { DisplayOrientation } from "love.window";
 
 type SceneLoveHandles = Omit<Handlers, "draw" | "update" | "run" | "load" | "threaderror" | "errorhandler">;
-type SceneManagerHandlers = Required<Omit<Handlers, "draw" | "update" | "run" | "load" | "threaderror" | "errorhandler">>;
+type SceneManagerHandlers = Required<
+  Omit<Handlers, "draw" | "update" | "run" | "load" | "threaderror" | "errorhandler">
+>;
 type MaybePromise = Promise<void> | void;
 export type Scene<T = undefined> = {
   name: string;
@@ -111,7 +113,7 @@ export const Scenes: SceneManager = {
   switch: async (scene) => {
     const previous = Scenes.current();
     if (previous?.exit != undefined) {
-      console.log("Leaving Scene", previous.name);
+      // console.log("Leaving Scene", previous.name);
       await previous.exit();
     }
 
@@ -131,7 +133,7 @@ export const Scenes: SceneManager = {
     }
 
     if (scene.enter != undefined) {
-      console.log("Entering Scene", scene.name);
+      // console.log("Entering Scene", scene.name);
       await scene.enter(previous);
     }
 

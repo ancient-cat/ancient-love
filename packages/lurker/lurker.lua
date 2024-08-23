@@ -1,3 +1,4 @@
+---@diagnostic disable: undefined-global
 --
 -- lurker
 --
@@ -43,8 +44,8 @@ local lovecallbacknames = {
 function lurker.init()
     lurker.print("Initing lurker")
     lurker.path = "."
-    lurker.preswap = function() end
-    lurker.postswap = function() end
+    lurker.preswap = function(f) end
+    lurker.postswap = function(f) end
     lurker.interval = .5
     lurker.protected = true
     lurker.quiet = false
@@ -215,7 +216,6 @@ end
 
 function lurker.hotswapfile(file)
     lurker.print("Hotswapping '{1}'...", { file })
-    lurker.print("before before preswap f is " .. file)
     if lurker.state == "error" then
         lurker.exiterrorstate()
     end
@@ -247,7 +247,6 @@ function lurker.hotswapfile(file)
 end
 
 function lurker.scan()
-
     if lurker.state == "init" then
         lurker.exitinitstate()
     end

@@ -634,14 +634,9 @@ function lume.uuid()
 end
 
 function lume.hotswap(modname)
-    print("lume.hotswap: " .. modname)
     local oldglobal = lume.clone(_G)
     local updated = {}
     local function update(old, new)
-        if old == nil then
-            print "old is nil?"
-            return
-        end
         if updated[old] then return end
         updated[old] = true
         local oldmt, newmt = getmetatable(old), getmetatable(new)

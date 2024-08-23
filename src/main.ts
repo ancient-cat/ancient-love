@@ -1,23 +1,38 @@
-import lume from "./lib/lume";
-
-// import lurker from "./lib/lurker";
-import lurker from "lurker";
-
-import { Scenes } from "./core/scene";
+import { lurker, lume } from "packages";
 
 import console from "./core/console";
+
+import { initialized_scenes, Scenes } from "./core/scene";
+
 import { GameTime } from "./core/systems/timer";
 import { game_events } from "./game";
 
-import collisions_test from "./core/test_scenes/collisions";
-
-import main_menu from "./scenes/main_menu";
 import scene_test from "./core/test_scenes/scene_test";
 
-lurker.preswap = (f) => f === "lualib_bundle.lua";
+lurker.preswap = (f: string) => {
+  if (f === "lualib_bundle.lua") return true;
+  if (f === undefined) return true;
+};
 
-love.load = () => {
-  console.log("hi?");
+let love_load_parms: {
+  arg: string[];
+  unfilteredArg: string[] | undefined;
+};
+
+lurker.postswap = (file: string) => {
+  console.log("postswap of", file);
+  if (love.load) {
+    love.load(love_load_parms.arg, love_load_parms.unfilteredArg);
+  }
+};
+
+love.load = (arg: string[], unfilteredArg?: string[]) => {
+  love_load_parms = {
+    arg,
+    unfilteredArg,
+  };
+
+  Scenes.init();
   Scenes.switch(scene_test);
 
   game_events.on("quit", () => {

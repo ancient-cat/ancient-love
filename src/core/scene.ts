@@ -27,6 +27,7 @@ type SceneMode = {
 };
 
 export type SceneManager = {
+  init: () => void;
   current: () => Scene<any> | undefined;
   get_scenes: () => readonly Scene<any>[];
   create: <T>(scene_init: Scene<T>) => Scene<T>;
@@ -48,15 +49,7 @@ const default_scene_mode: SceneMode = {
 
 let scenes: Scene<any>[] = [];
 const modes: SceneMode[] = [];
-const initialized_scenes = new Set<Scene<any>["name"]>();
-
-const debug_print_love_handlers = () => {
-  let list: string = "";
-  Object.keys(love.handlers).forEach((handler_name) => {
-    list += `love.handlers.${handler_name}\n`;
-  });
-  console.log(list);
-};
+export const initialized_scenes = new Set<Scene<any>["name"]>();
 
 export const get_modes = () => [default_scene_mode, ...modes];
 export const get_scenes = () => {
@@ -97,23 +90,12 @@ const recompute_scenes = () => {
   } else {
     handler_scenes = scenes.slice(0, last_handler_index + offset).reverse();
   }
-
-  console.log({
-    last_drawn_index,
-    last_updated_index,
-    last_handler_index,
-  });
-
-  // drawn_scenes = scenes.slice(0, last_drawn_index).reverse();
-  // updated_scenes = scenes.slice(0, last_updated_index).reverse();
-  // handler_scenes = scenes.slice(0, last_handler_index).reverse();
-  // console.log(modes);
-  console.log("drawn_scenes", drawn_scenes.map((d, i) => `${i}: ${d.name}`).join(", "));
-  console.log("updated_scenes", updated_scenes.map((d, i) => `${i}: ${d.name}`).join(", "));
-  console.log("handler_scenes", handler_scenes.map((d, i) => `${i}: ${d.name}`).join(", "));
 };
 
 export const Scenes: SceneManager = {
+  init: () => {
+    initialized_scenes.clear();
+  },
   current: () => scenes.at(0) ?? undefined,
 
   get_scenes: () => scenes,
@@ -127,7 +109,6 @@ export const Scenes: SceneManager = {
   },
 
   switch: async (scene) => {
-    console.log("switching to ", scene.name);
     const previous = Scenes.current();
     if (previous?.exit != undefined) {
       console.log("Leaving Scene", previous.name);

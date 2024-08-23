@@ -213,37 +213,41 @@ function lurker.resetfile(f)
     lurker.files[f] = lastmodified(f)
 end
 
-function lurker.hotswapfile(f)
-    lurker.print("Hotswapping '{1}'...", { f })
+function lurker.hotswapfile(file)
+    lurker.print("Hotswapping '{1}'...", { file })
+    lurker.print("before before preswap f is " .. file)
     if lurker.state == "error" then
         lurker.exiterrorstate()
     end
-    if lurker.preswap(f) then
-        lurker.print("Hotswap of '{1}' aborted by preswap", { f })
-        lurker.resetfile(f)
+
+    lurker.print("before preswap f is " .. file)
+    if lurker.preswap(file) then
+        lurker.print("Hotswap of '{1}' aborted by preswap", { file })
+        lurker.resetfile(file)
         return
     end
-    local modname = lurker.modname(f)
+    local modname = lurker.modname(file)
     local t, ok, err = lume.time(lume.hotswap, modname)
     if ok then
-        lurker.print("Swapped '{1}' in {2} secs", { f, t })
+        lurker.print("Swapped '{1}' in {2} secs", { file, t })
     else
-        lurker.print("Failed to swap '{1}' : {2}", { f, err })
+        lurker.print("Failed to swap '{1}' : {2}", { file, err })
         if not lurker.quiet and lurker.protected then
-            lurker.lasterrorfile = f
+            lurker.lasterrorfile = file
             lurker.onerror(err, true)
-            lurker.resetfile(f)
+            lurker.resetfile(file)
             return
         end
     end
-    lurker.resetfile(f)
-    lurker.postswap(f)
+    lurker.resetfile(file)
+    lurker.postswap(file)
     if lurker.protected then
         lurker.updatewrappers()
     end
 end
 
 function lurker.scan()
+
     if lurker.state == "init" then
         lurker.exitinitstate()
     end

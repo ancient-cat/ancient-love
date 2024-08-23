@@ -1,0 +1,12 @@
+{
+  "name": "packages",
+  "private": true,
+  "version": "1.0.0",
+  "description": "",
+  "main": "./index",
+  "type": "module",
+  "types": "./index.d.ts",
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

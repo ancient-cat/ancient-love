@@ -1,4 +1,5 @@
-declare interface Lume {
+/** @noSelf **/
+export interface LumeModule {
   _version: string;
   clamp(x: number, min: number, max: number): number;
   round(x: number, increment?: number): number;
@@ -57,6 +58,3 @@ declare interface Lume {
   dostring(str: string): any;
   uuid(): string;
 }
-
-declare const lume: Lume;
-export default lume;

@@ -13,5 +13,8 @@
   "prettier.printWidth": 120,
   "prettier.useTabs": false,
   "prettier.proseWrap": "preserve",
-  "Lua.diagnostics.globals": ["love"]
+  "Lua.diagnostics.globals": [
+    "love"
+  ],
+  "typescript.tsdk": "node_modules\\typescript\\lib"
 }

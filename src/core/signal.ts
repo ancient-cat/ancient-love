@@ -1,14 +1,13 @@
 type SignalUnsubscriber = () => void;
 
-export type Signal<EventName extends string> = {
-  on: (event: EventName, callback: CallableFunction) => SignalUnsubscriber;
-  once: (event: EventName, callback: CallableFunction) => SignalUnsubscriber;
-  off: (event: EventName, callback?: CallableFunction) => void;
+export type Signal<EventName extends string, CallbackOptions extends any[] = any[]> = {
+  on: (event: EventName, callback: (...args: CallbackOptions) => any) => SignalUnsubscriber;
+  once: (event: EventName, callback: (...args: CallbackOptions) => any) => SignalUnsubscriber;
+  off: (event: EventName, callback?: (...args: CallbackOptions) => any) => void;
   clear: () => void;
   emit: (event: EventName, ...extra_options: any[]) => void;
 };
-
-export const create_signal = <EventName extends string>(eventname: EventName): Signal<EventName> => {
+export const create_signal = <EventName extends string, CallbackOptions extends any[] = any[]>(eventname: EventName): Signal<EventName, CallbackOptions> => {
   let listeners: CallableFunction[] = [];
   const signal: Signal<EventName> = {
     on: (event, callback) => {
@@ -26,7 +25,7 @@ export const create_signal = <EventName extends string>(eventname: EventName): S
       return unsub;
     },
 
-    emit: (event, ...extra_options: any[]) => {
+    emit: (event, ...extra_options: CallbackOptions) => {
       listeners.forEach((cb) => {
         cb(...extra_options);
       });

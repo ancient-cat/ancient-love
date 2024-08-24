@@ -1,13 +1,13 @@
 import console from "../console";
 import { create_event_dispatcher } from "../dispatcher";
 import { Scenes } from "../scene";
-import { GameTime } from "../systems/timer";
+import { GameTime } from "../systems/gametime";
 
 let last_pressed: string | null = null;
 
 const events = create_event_dispatcher();
 
-const console_test = Scenes.create({
+const console_test = Scenes.create(() => ({
   name: "Console Test",
   state: undefined,
   enter: () => {
@@ -49,6 +49,6 @@ const console_test = Scenes.create({
       love.graphics.print(last_pressed, 400, 400);
     }
   },
-});
+}));
 
 export default console_test;

@@ -6,6 +6,8 @@ import type { Joystick, GamepadAxis, GamepadButton, JoystickHat } from "love.joy
 import type { KeyConstant, Scancode } from "love.keyboard";
 
 import type { DisplayOrientation } from "love.window";
+import { Readable } from "./observable/store-types";
+import { tap, untap } from "./observable/stores";
 
 type SceneLoveHandles = Omit<Handlers, "draw" | "update" | "run" | "load" | "threaderror" | "errorhandler">;
 type SceneManagerHandlers = Required<
@@ -15,6 +17,7 @@ type MaybePromise = Promise<void> | void;
 export type Scene<T = undefined> = {
   name: string;
   state: T;
+  stores?: Readable<any>[];
   update: (dt: number) => void;
   init?: () => MaybePromise;
   draw: () => void;
@@ -32,7 +35,7 @@ export type SceneManager = {
   init: () => void;
   current: () => Scene<any> | undefined;
   get_scenes: () => readonly Scene<any>[];
-  create: <T>(scene_init: Scene<T>) => Scene<T>;
+  create: <T>(scene_init: () => Scene<T>) => Scene<T>;
   switch: (scene: Scene<any>) => Promise<Scene<any>>;
   push: (scene: Scene<any>, mode?: Partial<SceneMode>) => MaybePromise;
   pop: () => MaybePromise;
@@ -94,6 +97,27 @@ const recompute_scenes = () => {
   }
 };
 
+const enter_scene = async (scene: Scene) => {
+  if (scene.enter !== undefined) {
+    await scene.enter();
+  }
+
+  // CASE: tap stores after so we can set stores without effects inside of scene.enter
+  if (scene.stores !== undefined) {
+    console.log(`Scene has ${scene.stores.length} stores. Tapping...`);
+    tap(...scene.stores);
+  }
+};
+const exit_scene = async (scene: Scene) => {
+  if (scene.stores !== undefined) {
+    untap(...scene.stores);
+  }
+
+  if (scene.exit !== undefined) {
+    await scene.exit();
+  }
+};
+
 export const Scenes: SceneManager = {
   init: () => {
     initialized_scenes.clear();
@@ -102,19 +126,15 @@ export const Scenes: SceneManager = {
 
   get_scenes: () => scenes,
 
-  create: <T>(scene_init: Scene<T>) => {
-    const scene: Scene<T> = {
-      ...scene_init,
-    };
-
+  create: <T>(scene_init: () => Scene<T>) => {
+    const scene: Scene<T> = scene_init();
     return scene;
   },
 
   switch: async (scene) => {
     const previous = Scenes.current();
-    if (previous?.exit != undefined) {
-      // console.log("Leaving Scene", previous.name);
-      await previous.exit();
+    if (previous != undefined) {
+      await exit_scene(previous);
     }
 
     if (scenes.length > 0) {
@@ -132,10 +152,7 @@ export const Scenes: SceneManager = {
       }
     }
 
-    if (scene.enter != undefined) {
-      // console.log("Entering Scene", scene.name);
-      await scene.enter(previous);
-    }
+    await enter_scene(scene);
 
     return scene;
   },
@@ -153,9 +170,7 @@ export const Scenes: SceneManager = {
 
     recompute_scenes();
 
-    if (scene.enter != undefined) {
-      await scene.enter(current);
-    }
+    await enter_scene(scene);
   },
 
   pop: async () => {
@@ -166,8 +181,8 @@ export const Scenes: SceneManager = {
 
     recompute_scenes();
 
-    if (current?.exit !== undefined) {
-      await current.exit();
+    if (current !== undefined) {
+      exit_scene(current);
     }
   },
 

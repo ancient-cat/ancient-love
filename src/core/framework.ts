@@ -2,7 +2,7 @@ let old_load: NonNullable<typeof love.load>;
 let old_update: NonNullable<typeof love.update>;
 
 import { lurker, lume } from "packages";
-import { GameTime } from "./systems/timer";
+import { GameTime } from "./systems/gametime";
 import { Scenes } from "./scene";
 import console from "./console";
 

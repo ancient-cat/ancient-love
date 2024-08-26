@@ -1,4 +1,3 @@
-import console from "../console";
 import type { Readable, StartStopNotifier, Subscriber, Unsubscriber, Writable, StoresValues } from "./store-types";
 
 export type { Readable, Writable, Subscriber, Unsubscriber, StoresValues };
@@ -104,7 +103,6 @@ const tapped_stores = new Map<Readable<any>, Unsubscriber>();
  * @param store
  */
 export const tap = (...stores: Readable<any>[]) => {
-  console.log(`Tapping ${stores.length} stores`);
   stores.forEach((store) => {
     if (!tapped_stores.has(store)) {
       const unsub = store.subscribe(() => {});
@@ -114,7 +112,6 @@ export const tap = (...stores: Readable<any>[]) => {
 };
 
 export const untap = (...stores: Readable<any>[]) => {
-  console.log(`Un-Tapping ${stores.length} stores`);
   stores.forEach((store) => {
     if (tapped_stores.has(store)) {
       const unsub = tapped_stores.get(store)!;

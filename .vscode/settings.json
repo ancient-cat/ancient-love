@@ -13,8 +13,15 @@
   "prettier.printWidth": 120,
   "prettier.useTabs": false,
   "prettier.proseWrap": "preserve",
-  "Lua.diagnostics.globals": [
-    "love"
-  ],
-  "typescript.tsdk": "node_modules\\typescript\\lib"
+  "Lua.diagnostics.globals": ["love"],
+  "typescript.tsdk": "node_modules\\typescript\\lib",
+  "extended-embedded-languages.languages": {
+    "typescript": {
+      "glsl": [
+        "glsl",
+        "\\bglsl`", // For tagged template literal
+        "/\\*glsl\\*/" // For inline comments
+      ]
+    }
+  }
 }

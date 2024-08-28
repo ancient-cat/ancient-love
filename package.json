@@ -39,6 +39,7 @@
     "typescript-to-lua": "^1.26.2"
   },
   "dependencies": {
+    "flux": "file:packages/flux",
     "packages": "file:packages"
   }
 }

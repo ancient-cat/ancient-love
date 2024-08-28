@@ -1,0 +1,3 @@
+return {
+    flux = require "./flux"
+}

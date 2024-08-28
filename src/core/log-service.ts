@@ -140,14 +140,14 @@ export const create_log_service: (init_level?: LogLevel) => LogService = (init_l
     }
   };
   const warn = (...args: any[]) => {
-    if (log_level === "verbose" || log_level === "warning") {
+    if (log_level === "verbose" || log_level === "info" || log_level === "warning") {
       const msg = args.map((thing) => output(thing)).join(" ");
       print(`${colored("yellow", "warn:")} ${msg}`);
     }
   };
 
   const error = (...args: any[]) => {
-    if (log_level === "verbose" || log_level === "warning") {
+    if (log_level === "verbose" || log_level === "info" || log_level === "warning" || log_level === "error") {
       const msg = args.map((thing) => output(thing)).join(" ");
       print(`${colored("red", "error:")} ${msg}`);
     }

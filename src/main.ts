@@ -9,13 +9,13 @@ import scene_test from "./core/test_scenes/scene_test";
 import stores_test from "./core/test_scenes/stores_test";
 import gametime_test from "./core/test_scenes/gametime_test";
 import tween_test from "./core/test_scenes/tween_test";
+import camera_test from "./core/test_scenes/camera_test";
+
 import { GameTime } from "./core/systems/gametime";
 import { flux } from "flux";
 
-// Setting love handlers before initialize will make it a "global" handler
-// Global handlers will be called in-addition-to the Scene handlers
 love.load = (arg: string[]) => {
-  Scenes.switch(tween_test);
+  Scenes.switch(camera_test);
 
   game_events.on("quit", () => {
     love.event.quit();

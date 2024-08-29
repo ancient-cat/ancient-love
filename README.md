@@ -9,7 +9,7 @@
 - [x] signals
 - [x] Observables
 - [ ] world / camera
-- [ ] tween
+- [x] tween
 - [ ] color
 - [ ] controller / input mapping
 - [ ] advanced collisions

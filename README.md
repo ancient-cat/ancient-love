@@ -8,7 +8,7 @@
 - [x] timer
 - [x] signals
 - [x] Observables
-- [ ] world / camera
+- [x] camera
 - [x] tween
 - [ ] color
 - [ ] controller / input mapping

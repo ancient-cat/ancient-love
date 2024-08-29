@@ -39,6 +39,7 @@
     "typescript-to-lua": "^1.26.2"
   },
   "dependencies": {
+    "cam11": "file:packages/cam11",
     "flux": "file:packages/flux",
     "packages": "file:packages"
   }

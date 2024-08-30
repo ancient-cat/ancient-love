@@ -1,15 +1,16 @@
-import { Byte, Degree, NormalizedNumber, Percentage } from "./common";
+import { Byte, Degree, NormalizedInt, NormalizedNumber, Percentage } from "./common";
 
-export type HSLData = [h: Degree, s: NormalizedNumber, l: NormalizedNumber, a?: NormalizedNumber];
+export type HSLData = [h: Degree, s: NormalizedInt, l: NormalizedInt, a?: NormalizedInt];
 
 /**
  * Represents color via red, blue, green and alpha values between 0—255
  */
 export type RGBData = [r: Byte, g: Byte, b: Byte, a?: Byte];
 export type ColorData = {
-  r: NormalizedNumber;
-  g: NormalizedNumber;
-  b: NormalizedNumber;
+  h: Degree;
+  s: NormalizedInt;
+  l: NormalizedInt;
+  a: NormalizedInt;
 };
 
 export const ColorData = {

@@ -10,12 +10,14 @@ import stores_test from "./core/test_scenes/stores_test";
 import gametime_test from "./core/test_scenes/gametime_test";
 import tween_test from "./core/test_scenes/tween_test";
 import camera_test from "./core/test_scenes/camera_test";
+import color_test from "./core/test_scenes/color_test";
 
 import { GameTime } from "./core/systems/gametime";
 import { flux } from "flux";
 
+math.randomseed(os.clock());
 love.load = (arg: string[]) => {
-  Scenes.switch(camera_test);
+  Scenes.switch(color_test);
 
   game_events.on("quit", () => {
     love.event.quit();

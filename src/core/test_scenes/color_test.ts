@@ -4,56 +4,50 @@ import { Scenes } from "../scene";
 import { flux, Tween } from "flux";
 
 export default Scenes.create(() => {
-  const thing: {
-    text: string;
-    x: number;
-    y: number;
-  } = {
-    text: "Hello World",
-    x: 0,
-    y: 0,
+  const [mouse_x, mouse_y] = love.mouse.getPosition();
+  love.mouse.setVisible(false);
+  const mouse = {
+    x: mouse_x,
+    y: mouse_y,
   };
 
-  let background_color: ColorType = new ColorType(100, 60, 40);
-
-  let tween: Tween;
-  let color_tween: Tween;
-
-  const retween = (w: number, h: number) => {
-    const duration = math.random(1, 2);
-    tween = flux.to(thing, duration, {
-      x: math.random(0, w),
-      y: math.random(0, h),
-    });
-
-    color_tween = flux.to(background_color, duration, {
-      h: randomHue(),
-    });
-
-    tween.oncomplete(() => {
-      retween(w, h);
-    });
+  const offset = {
+    x: 20,
+    y: -5,
   };
+
+  let background_color: ColorType = new ColorType(randomHue(), 60, 40);
 
   return {
     name: "color_test",
     state: undefined,
-    enter: () => {
-      const [w, h] = love.graphics.getDimensions();
-      console.log("OY?");
-      console.log(...background_color.rgb);
+    enter: () => {},
 
-      // move thing offscreen initially so it tweens into view
-      thing.x = (w / 2) * -1;
-      thing.y = -100;
-      retween(w, h);
+    mousemoved(x, y, dx, dy, istouch) {
+      const [w, h] = love.graphics.getDimensions();
+      const x_dim = x / w;
+      const y_dim = y / h;
+      background_color.h = x_dim * 360;
+      background_color.s = y_dim * 100;
+      mouse.x = x;
+      mouse.y = y;
+      if (x_dim > 0.8) {
+        offset.x = -122;
+      } else {
+        offset.x = 10;
+      }
     },
     update: (dt) => {},
     draw: () => {
-      console.log(...background_color.rgb);
-      love.graphics.setBackgroundColor(...background_color.hsl);
+      love.graphics.setBackgroundColor(...background_color.rgb);
       love.graphics.setColor(1, 1, 1);
-      love.graphics.print(thing.text, thing.x, thing.y);
+      love.graphics.rectangle("line", mouse.x, mouse.y, 4, 4);
+      love.graphics.setLineWidth(0.5);
+      love.graphics.print(
+        `hsl(${background_color.h.toFixed(0)}° ${background_color.s.toFixed(0)}% ${background_color.l.toFixed(0)}%)`,
+        mouse.x + offset.x,
+        mouse.y + offset.y
+      );
     },
   };
 });

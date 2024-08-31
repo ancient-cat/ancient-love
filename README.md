@@ -10,13 +10,13 @@
 - [x] Observables
 - [x] camera
 - [x] tween
-- [ ] color
+- [x] color
 - [ ] controller / input mapping
 - [ ] advanced collisions
 - [ ] collision system
 - [ ] curved geometries / lerp'd things
 - [ ] UI
-- [ ] GLSL shader syntax highlighting
+- [x] GLSL shader syntax highlighting
 - [ ] Sound Mixer
 
 ### Not included, for now

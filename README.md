@@ -11,12 +11,12 @@
 - [x] camera
 - [x] tween
 - [x] color
+- [x] GLSL shader syntax highlighting
 - [ ] controller / input mapping
 - [ ] advanced collisions
 - [ ] collision system
 - [ ] curved geometries / lerp'd things
 - [ ] UI
-- [x] GLSL shader syntax highlighting
 - [ ] Sound Mixer
 
 ### Not included, for now

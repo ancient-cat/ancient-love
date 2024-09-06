@@ -15,10 +15,11 @@ import ui_test from "./core/test_scenes/ui_test";
 
 import { GameTime } from "./core/systems/gametime";
 import { flux } from "flux";
+import main_menu from "./scenes/main_menu";
 
 math.randomseed(os.clock());
 love.load = (arg: string[]) => {
-  Scenes.switch(ui_test);
+  Scenes.switch(main_menu);
 
   game_events.on("quit", () => {
     love.event.quit();

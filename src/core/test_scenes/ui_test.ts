@@ -4,12 +4,7 @@ import { create_ui } from "../ui/simple-ui";
 
 export default Scenes.create(() => {
   const [right, bottom] = love.graphics.getDimensions();
-  const UI = create_ui({
-    left: 0,
-    top: 0,
-    bottom,
-    right,
-  });
+  const UI = create_ui();
 
   const button = UI.create_button({
     id: "test",

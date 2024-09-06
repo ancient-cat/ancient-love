@@ -1,4 +1,4 @@
-import type { AlignMode, ColouredText, Font, Text } from "love.graphics";
+import { line, type AlignMode, type ColouredText, type Font, type Text } from "love.graphics";
 
 import { Box, point_intersection } from "../aabb";
 import console from "../console";
@@ -22,7 +22,7 @@ import type {
   Vector3Data,
 } from "./types";
 
-export const create_ui = (container: OffsetBox) => {
+export const create_ui = () => {
   const DEBUG = false;
   let unit: number = 4;
 
@@ -82,10 +82,12 @@ export const create_ui = (container: OffsetBox) => {
 
   let projection: Map<Button, Box> = new Map();
 
-  const configure = (configuration: Styles) => {
-    if (configuration.unit !== undefined) {
-      unit = configuration.unit;
+  const configure = (_configuration: Partial<Styles>) => {
+    if (_configuration.unit !== undefined) {
+      unit = _configuration.unit;
     }
+
+    configuration = { ...configuration, ..._configuration };
   };
 
   const set_theme = (_theme: Theme) => {
@@ -110,18 +112,17 @@ export const create_ui = (container: OffsetBox) => {
     transform_stack = [[0, 0]];
     love.graphics.setColor(0, 0, 0);
     let vertical: number = 0;
-    let line_height: number = configuration.unit * 4;
+    let line_height: number = configuration.unit * 2;
     with_transform([configuration.root.padding.left ?? 0, configuration.root.padding.top ?? 0, scale], () => {
       elements.forEach((el, i) => {
         with_transform([0, 0], () => {
           if (is_button(el)) {
             const [w, h] = measure_button(el);
-            const rhythm_align = unit - (vertical % configuration.unit);
 
             with_transform([0, vertical], () => {
               draw_button(el);
             });
-            vertical += h + rhythm_align + i * line_height;
+            vertical += math.max(i * h, h) + math.max(line_height * i, line_height);
           } else if (is_label(el)) {
             draw_label(el);
           } else if (is_flex(el)) {
@@ -160,7 +161,8 @@ export const create_ui = (container: OffsetBox) => {
 
   const draw_button = (el: Button) => {
     const [btn_width, btn_height, text] = measure_button(el);
-    record_projection(el, btn_width, btn_height);
+
+    record_projection(el, el.limit ?? btn_width, btn_height);
 
     if (el.active) {
       love.graphics.setColor(...theme.btn.active.background.rgb);
@@ -170,11 +172,11 @@ export const create_ui = (container: OffsetBox) => {
       love.graphics.setColor(...theme.btn.inactive.background.rgb);
     }
 
-    love.graphics.rectangle("fill", el.position.x, el.position.y, btn_width, btn_height);
+    love.graphics.rectangle("fill", el.position.x, el.position.y, el.limit ?? el.limit ?? btn_width, btn_height);
 
     if (theme.btn.inactive.border) {
       love.graphics.setColor(...theme.btn.inactive.border.rgb);
-      love.graphics.rectangle("line", el.position.x, el.position.y, btn_width, btn_height);
+      love.graphics.rectangle("line", el.position.x, el.position.y, el.limit ?? btn_width, btn_height);
     }
 
     if (el.active) {
@@ -195,7 +197,7 @@ export const create_ui = (container: OffsetBox) => {
     if (el.limit) {
       love.graphics.printf(
         content,
-        el.position.x + (el.padding?.left ?? 0),
+        el.position.x + (el.limit !== undefined ? 0 : (el.padding?.left ?? 0)),
         el.position.y + (el.padding?.top ?? 0),
         el.limit,
         el.align
@@ -345,7 +347,6 @@ export const create_ui = (container: OffsetBox) => {
     update(dt: number) {},
 
     mousereleased: (...click_params: Parameters<NonNullable<typeof love.mousereleased>>) => {
-      console.log("click");
       const [x, y, button, is_touch, presses] = click_params;
 
       if (button !== 1) {

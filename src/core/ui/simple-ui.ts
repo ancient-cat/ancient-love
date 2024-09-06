@@ -218,32 +218,33 @@ export const create_ui = (container: OffsetBox) => {
     }
   };
 
-  const draw_label = (el: Label): ElementMeasurement => {
+  const draw_label = (el: Label) => {
     let [width, height] = [0, 0];
-    const padding_left = el.padding?.left ?? 0;
-    const padding_top = el.padding?.top ?? 0;
-    const padding_right = el.padding?.right ?? el.padding?.left ?? 0;
-    const padding_bottom = el.padding?.bottom ?? el.padding?.top ?? 0;
+    const [text_w, text_h, text] = measure_text(el, configuration);
+    width = text_w + (el.padding?.left ?? 0) + (el.padding?.right ?? 0);
+    height = text_h + (el.padding?.top ?? 0) + (el.padding?.bottom ?? 0);
+
     if (typeof el.text === "string") {
       love.graphics.setColor(el.color?.rgb ?? theme.panel.color.rgb);
     }
 
-    // let text: Text;
-    // if (typeof el.text === "string") {
-    //   text = love.graphics.newText(configuration.font, el.text);
-    // } else {
-    //   let words = el.text.filter((el) => typeof el === "string").join("");
-    //   text = love.graphics.newText(configuration.font, words);
-    // }
-
-    // [width, height] = text.getDimensions();
-
-    // love.graphics.print(el.text, el.position.x + padding_left, el.position.y + padding_top);
-
-    return [
-      width + padding_left + padding_right + (el.margin?.left ?? 0) + (el.margin?.right ?? 0),
-      height + padding_top + padding_bottom + (el.margin?.top ?? 0) + (el.margin?.bottom ?? 0),
-    ];
+    let content: string | ColouredText;
+    if (typeof el.text === "string") {
+      content = el.text;
+    } else {
+      content = to_coloured_text(el.text);
+    }
+    if (el.limit) {
+      love.graphics.printf(
+        content,
+        el.position.x + (el.padding?.left ?? 0),
+        el.position.y + (el.padding?.top ?? 0),
+        el.limit,
+        el.align
+      );
+    } else {
+      love.graphics.print(content, el.position.x + (el.padding?.left ?? 0), el.position.y + (el.padding?.top ?? 0));
+    }
   };
 
   const create_button = (options: ButtonOptions): Button => {

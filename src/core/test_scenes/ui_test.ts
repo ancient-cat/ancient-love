@@ -21,12 +21,21 @@ export default Scenes.create(() => {
     limit: 10,
   });
 
+  const label1 = UI.create_label({
+    text: "Test Label",
+    // position: {
+    //   x: 100,
+    //   y: 100,
+    // },
+  });
+
   button.on("click", () => {
     console.log("Button clicked!");
   });
 
   UI.add(button);
   UI.add(button2);
+  UI.add(label1);
   UI.scale(1.25);
 
   return {

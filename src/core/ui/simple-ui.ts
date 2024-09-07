@@ -250,7 +250,7 @@ export const create_ui = () => {
   };
 
   const create_button = (options: ButtonOptions): Button => {
-    const signal = create_signal("click");
+    const on_click = create_signal();
 
     const default_options: Omit<Required<ButtonOptions>, "text" | "limit" | "id"> = {
       width: 0,
@@ -265,7 +265,7 @@ export const create_ui = () => {
     };
 
     const btn: Button = {
-      ...signal,
+      ...on_click,
       ...default_options,
       ...options,
       disabled: false,

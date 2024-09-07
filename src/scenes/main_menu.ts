@@ -52,15 +52,15 @@ const main_menu = Scenes.create(() => {
     name: "Main Menu",
     state: undefined,
     enter: () => {
-      start_game_btn.on("click", () => {
+      start_game_btn.subscribe(() => {
         game_events.emit("start");
       });
 
-      options_btn.on("click", () => {
+      options_btn.subscribe(() => {
         // open options UI
       });
 
-      exit_game_btn.on("click", () => {
+      exit_game_btn.subscribe(() => {
         game_events.emit("quit");
       });
     },

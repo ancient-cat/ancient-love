@@ -24,7 +24,7 @@ export default Scenes.create(() => {
     // },
   });
 
-  button.on("click", () => {
+  button.subscribe(() => {
     console.log("Button clicked!");
   });
 

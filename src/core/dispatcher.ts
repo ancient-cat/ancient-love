@@ -1,14 +1,29 @@
 type Unsubscriber = () => void;
 
-export type EventDispatcher<EventMap extends Record<string, any> = any> = {
-  on: (event: keyof EventMap, callback: CallableFunction) => Unsubscriber;
-  once: (event: keyof EventMap, callback: CallableFunction) => Unsubscriber;
-  off: (event: keyof EventMap, callback?: CallableFunction) => void;
+export type EventDispatcher<
+  EventMap extends Record<string, any> = any,
+  CallbackReturnMap extends Record<keyof EventMap, any | void> = any,
+> = {
+  on: <EventName extends keyof EventMap>(
+    event: EventName,
+    callback: (detail: EventMap[EventName]) => CallbackReturnMap[EventName]
+  ) => Unsubscriber;
+  once: <EventName extends keyof EventMap>(
+    event: EventName,
+    callback: (detail: EventMap[EventName]) => CallbackReturnMap[EventName]
+  ) => Unsubscriber;
+  off: <EventName extends keyof EventMap>(
+    event: EventName,
+    callback?: (detail: EventMap[EventName]) => CallbackReturnMap[EventName]
+  ) => void;
+  emit: <EventName extends keyof EventMap>(event: EventName, detail?: EventMap[EventName]) => void;
   clear: () => void;
-  emit: (event: keyof EventMap, ...extra_options: any[]) => void;
 };
 
-export const create_event_dispatcher = <EventMap extends Record<string, any>>(): EventDispatcher<EventMap> => {
+export const create_event_dispatcher = <
+  EventMap extends Record<string, any>,
+  CallbackReturnMap extends Record<keyof EventMap, any> = any,
+>(): EventDispatcher<EventMap, CallbackReturnMap> => {
   const events = new Map<keyof EventMap, CallableFunction[]>();
   const signal: EventDispatcher<EventMap> = {
     on: (event, callback) => {
@@ -20,18 +35,18 @@ export const create_event_dispatcher = <EventMap extends Record<string, any>>():
     },
 
     once: (event, callback) => {
-      const unsub = signal.on(event, () => {
-        callback();
+      const unsub = signal.on(event, (detail: EventMap[typeof event]) => {
         unsub();
+        callback(detail);
       });
 
       return unsub;
     },
 
-    emit: (event, ...extra_options: any[]) => {
+    emit: (event, detail?: EventMap[typeof event]) => {
       const callbacks = events.get(event) ?? [];
       callbacks.forEach((cb) => {
-        cb(...extra_options);
+        cb(detail);
       });
     },
 

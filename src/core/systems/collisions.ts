@@ -2,7 +2,7 @@ import { ECS } from "../../ecs";
 import { ColliderComponent, ColliderResolution, CollisionNotifier } from "../../ecs/components";
 import { Box, box_intersection } from "../aabb";
 import { assertion } from "../assert";
-import * as bit from "../bit";
+import { has } from "../bit";
 import console from "../console";
 import { create_event_dispatcher, EventDispatcher } from "../dispatcher";
 import { GameTime } from "./gametime";
@@ -12,15 +12,34 @@ const throttled_log = GameTime.create_throttle(1, (target: Box, colliders: Queri
   console.log(colliders);
 });
 
-type CollisionEventMap = {
-  collision: [record: QueriedComponentRecord<"collider">, colliders: QueriedComponentRecord<"collider">[]];
-  touch: [record: QueriedComponentRecord<"collider">, colliders: QueriedComponentRecord<"collider">[]];
-  collided: [record: QueriedComponentRecord<"collider">, colliders: QueriedComponentRecord<"collider">[]];
-  enter: [record: QueriedComponentRecord<"collider">, colliders: QueriedComponentRecord<"collider">[]];
-  exit: [record: QueriedComponentRecord<"collider">, colliders: QueriedComponentRecord<"collider">[]];
+export type CollisionDetail = {
+  record: QueriedComponentRecord<"collider">;
+  collider: QueriedComponentRecord<"collider">;
+  dt: number;
+  moved_x: number;
+  moved_y: number;
 };
 
-export type CollisionSystem = EventDispatcher<CollisionEventMap> & {
+type CollisionEventMap = {
+  collision: {
+    record: QueriedComponentRecord<"collider">;
+    collisions: QueriedComponentRecord<"collider">[];
+  };
+  touch: CollisionDetail;
+  collided: CollisionDetail;
+  enter: CollisionDetail;
+  exit: CollisionDetail;
+};
+
+type CollisionReturnMap = {
+  collision: boolean | void;
+  touch: void;
+  collided: void;
+  enter: void;
+  exit: void;
+};
+
+export type CollisionSystem = EventDispatcher<CollisionEventMap, CollisionReturnMap> & {
   update: (entity: Entity, x: number, y: number) => void;
   check: (
     component: QueriedComponentRecord<"collider">,
@@ -31,7 +50,7 @@ export type CollisionSystem = EventDispatcher<CollisionEventMap> & {
 };
 
 export const createCollisionSystem = (): CollisionSystem => {
-  const events: EventDispatcher<CollisionEventMap> = create_event_dispatcher<CollisionEventMap>();
+  const events = create_event_dispatcher<CollisionEventMap, CollisionReturnMap>();
 
   const active: Map<Entity, Entity[]> = new Map<Entity, Entity[]>();
 
@@ -66,47 +85,77 @@ export const createCollisionSystem = (): CollisionSystem => {
       const collisions = system.check(record, target_x, target_y);
 
       if (collisions.length > 0) {
-        // TODO: decide how responses are implemented
-        // slide, area, etc
-        // console.log(`${collisions.length} Collisions`);
-
         collisions.sort((a, b) => {
           return collision_order[a.collider.resolution] - collision_order[b.collider.resolution];
         });
 
-        if (record.collider.notify !== CollisionNotifier.None) {
+        if (has(record.collider.notify, CollisionNotifier.Exit | CollisionNotifier.All)) {
           let items = active.get(record.entity) ?? [];
           let has_changed: boolean = false;
 
-          // Handle exiting collisions (things that were previously collisions and now aren't)
-          const exiting = items.filter((item) => collisions.find((col) => col.entity === item) === undefined);
-          if (exiting.length > 0) {
-            items = items.filter((item) => !exiting.includes(item));
+          // Handle exiting collisions
+          // and exiting collision is something that was colliding previously and now is not colliding
+          const exiting_entities = items.filter((item) => collisions.find((col) => col.entity === item) === undefined);
+          if (exiting_entities.length > 0) {
+            items = items.filter((item) => !exiting_entities.includes(item));
             has_changed = true;
-            exiting.forEach((entity) => {
+            exiting_entities.forEach((entity) => {
               const collider = ECS.tap<"collider">(entity);
-              events.emit("exit", record, collider);
+
+              events.emit("exit", {
+                record,
+                collider,
+                dt,
+                moved_x: target_x,
+                moved_y: target_y,
+              });
             });
           }
 
           for (let collision of collisions) {
             const previously_collided = items.includes(collision.entity);
 
-            if (
-              record.collider.notify === CollisionNotifier.All ||
-              bit.has(record.collider.notify, CollisionNotifier.Continious)
-            ) {
-              if (previously_collided) {
-                events.emit("collided", record, collision);
+            if (has(record.collider.notify, CollisionNotifier.All | CollisionNotifier.Continious)) {
+              events.emit("collided", {
+                record,
+                collider: collision,
+                dt,
+                moved_x: target_x,
+                moved_y: target_y,
+              });
+            }
+
+            if (!previously_collided) {
+              let added: boolean = false;
+              if (has(record.collider.notify, CollisionNotifier.Touch | CollisionNotifier.All)) {
+                items.push(collision.entity);
+                added = true;
+                has_changed = true;
+                if (has(record.collider.notify, CollisionNotifier.Touch)) {
+                  events.emit("touch", {
+                    record,
+                    collider: collision,
+                    dt,
+                    moved_x: target_x,
+                    moved_y: target_y,
+                  });
+                }
               }
-            } else if (!previously_collided && bit.has(record.collider.notify, CollisionNotifier.Touch)) {
-              items.push(collision.entity);
-              has_changed = true;
-              events.emit("touch", record, collision);
-            } else if (!previously_collided && bit.has(record.collider.notify, CollisionNotifier.Enter)) {
-              items.push(collision.entity);
-              has_changed = true;
-              events.emit("enter", record, collision);
+
+              if (has(record.collider.notify, CollisionNotifier.Enter | CollisionNotifier.All)) {
+                // prevent the same entity from being added twice
+                if (!added) {
+                  items.push(collision.entity);
+                  has_changed = true;
+                }
+                events.emit("enter", {
+                  record,
+                  collider: collision,
+                  dt,
+                  moved_x: target_x,
+                  moved_y: target_y,
+                });
+              }
             }
           }
 
@@ -122,7 +171,7 @@ export const createCollisionSystem = (): CollisionSystem => {
         if (non_collisions.length === collisions.length) {
           record.collider.x += target_x;
           record.collider.y += target_y;
-          events.emit("collision", record, collisions);
+          events.emit("collision", { record, collisions });
         } else {
           let handled: boolean = false;
 
@@ -176,25 +225,8 @@ export const createCollisionSystem = (): CollisionSystem => {
 
           if (handled) {
             handled = true;
-            events.emit("collision", record, collisions);
+            events.emit("collision", { record, collisions });
           }
-
-          // collisions.forEach((collider) => {
-          //   handle_notify(record, collider);
-          // });
-
-          // let others = active.get(record.entity) ?? [];
-          // if (record.collider.notify === CollisionNotifier.All) {
-
-          // }
-          // else {
-          //   record.collider.notify === CollisionNotifier.Continious;
-          // }
-
-          // record.collider.x += target_x;
-          // record.collider.y += target_y;
-
-          // console.log("Collisions", collisions.at(0)?.collider.x +);
         }
       } else {
         record.collider.x += target_x;
@@ -209,13 +241,13 @@ export const createCollisionSystem = (): CollisionSystem => {
       const colliders = ECS.query("collider");
 
       // optimization oppurtunity: spatial partitioning
-      return colliders.filter((collider) => {
+      const collisions = colliders.filter((collider) => {
         // don't include the current entity
         if (collider.entity === component.entity) {
           return false;
         }
 
-        if (bit.has(moved_collider.interactsWith, collider.collider.group)) {
+        if (has(moved_collider.interactsWith, collider.collider.group)) {
           const box: Box = {
             x: moved_collider.x + moved_x,
             y: moved_collider.y + moved_y,
@@ -231,6 +263,8 @@ export const createCollisionSystem = (): CollisionSystem => {
 
         return false;
       });
+
+      return collisions;
     },
   };
 

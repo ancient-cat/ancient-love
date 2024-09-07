@@ -4,6 +4,7 @@ import { Scenes } from "../scene";
 import { createCollisionSystem } from "../systems/collisions";
 import { ECS } from "../../ecs";
 import { CollisionGroup, CollisionNotifier } from "../../ecs/components/collider";
+import { mouse } from "love";
 
 const collisions_test = Scenes.create(() => {
   const player = ECS.create();
@@ -30,8 +31,8 @@ const collisions_test = Scenes.create(() => {
     y: 350,
     w: 100,
     h: 100,
-    interactsWith: CollisionGroup.All,
-    notify: CollisionNotifier.Enter | CollisionNotifier.Exit,
+    interactsWith: CollisionGroup.Player,
+    notify: CollisionNotifier.Touch,
     resolution: "bounce",
   });
 
@@ -42,8 +43,8 @@ const collisions_test = Scenes.create(() => {
     y: 200,
     w: 60,
     h: 60,
-    interactsWith: CollisionGroup.All,
-    notify: CollisionNotifier.Enter | CollisionNotifier.Exit,
+    interactsWith: CollisionGroup.Player,
+    notify: CollisionNotifier.All,
     resolution: "static",
   });
 
@@ -54,10 +55,12 @@ const collisions_test = Scenes.create(() => {
     y: 100,
     w: 60,
     h: 60,
-    interactsWith: CollisionGroup.All,
+    interactsWith: CollisionGroup.Player,
     notify: CollisionNotifier.Enter | CollisionNotifier.Exit,
     resolution: "none",
   });
+
+  const active_collisions = new Map<Entity, boolean>();
 
   const player_with_components = ECS.tap<"collider">(player);
   const drawn_blocks: QueriedComponentRecord<"collider">[] = [
@@ -71,13 +74,32 @@ const collisions_test = Scenes.create(() => {
   return {
     name: "collisions_test",
     state: undefined,
-    enter: () => {},
+    enter: () => {
+      collision_system.on("collision", ({ record, collisions }) => {
+        active_collisions.set(record.entity, true);
+        collisions.forEach((col) => {
+          active_collisions.set(col.entity, true);
+        });
+      });
+
+      collision_system.on("enter", ({ record, collider }) => {
+        if (record.entity === player) {
+          console.log(
+            "player entered",
+            collider.collider.x,
+            collider.collider.y,
+            collider.collider.w,
+            collider.collider.h
+          );
+        }
+      });
+    },
     draw: () => {
       love.graphics.setBackgroundColor(0.1, 0.1, 0.2);
 
       love.graphics.setColor(0.8, 0.1, 0.1);
       love.graphics.rectangle(
-        "line",
+        active_collisions.has(player) ? "fill" : "line",
         player_with_components.collider.x,
         player_with_components.collider.y,
         player_with_components.collider.w,
@@ -86,16 +108,21 @@ const collisions_test = Scenes.create(() => {
 
       drawn_blocks.forEach((block, i) => {
         love.graphics.setColor(0.2 * i, 0.6, 0.8);
-        love.graphics.rectangle("line", block.collider.x, block.collider.y, block.collider.w, block.collider.h);
+        love.graphics.rectangle(
+          active_collisions.has(block.entity) ? "fill" : "line",
+          block.collider.x,
+          block.collider.y,
+          block.collider.w,
+          block.collider.h
+        );
       });
     },
     keypressed: (key: string) => {
-      console.log(key);
       if (key === "up") {
       }
     },
     update: (dt) => {
-      const px_per_second = 200;
+      active_collisions.clear();
       const pressed_keys = {
         up: love.keyboard.isDown("up"),
         down: love.keyboard.isDown("down"),
@@ -103,9 +130,10 @@ const collisions_test = Scenes.create(() => {
         right: love.keyboard.isDown("right"),
       } as const;
 
+      const px_per_second = 200;
+
       let x_velocity: number = 0;
       let y_velocity: number = 0;
-
       if (pressed_keys.down) {
         y_velocity = 1;
       } else if (pressed_keys.up) {

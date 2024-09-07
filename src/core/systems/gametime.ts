@@ -20,7 +20,7 @@ const SAFE_TICK_COUNT = 3;
 let elapsed_time: Seconds = 0;
 
 let ticks = 0;
-const signal = create_signal<"safe-tick", [elapsed: number, delta: number]>("safe-tick");
+const safe_tick = create_signal<readonly [elapsed: number, delta: number]>();
 
 export const GameTime: GameTimer = {
   get_elapsed: () => elapsed_time,
@@ -33,7 +33,7 @@ export const GameTime: GameTimer = {
     items.forEach((item) => item.gametime.update(elapsed_time, dt));
 
     if (ticks % SAFE_TICK_COUNT === 0) {
-      signal.emit("safe-tick", elapsed_time, dt);
+      safe_tick.emit([elapsed_time, dt]);
     }
   },
 
@@ -47,7 +47,7 @@ export const GameTime: GameTimer = {
     }
 
     await new Promise<void>((resolve) => {
-      const unsub = signal.on("safe-tick", (elapsed, delta) => {
+      const unsub = safe_tick.subscribe(([elapsed, delta]) => {
         if (elapsed >= target) {
           unsub();
           resolve();
@@ -78,7 +78,7 @@ export const GameTime: GameTimer = {
     const start = elapsed_time;
     let next = start + period;
 
-    const unsub = signal.on("safe-tick", (elapsed, delta) => {
+    const unsub = safe_tick.subscribe(([elapsed, delta]) => {
       if (elapsed_time >= next) {
         next = elapsed_time + period;
         callback();
@@ -90,5 +90,5 @@ export const GameTime: GameTimer = {
 };
 
 export const clear_intervals = () => {
-  signal.clear();
+  safe_tick.clear();
 };

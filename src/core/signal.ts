@@ -1,37 +1,37 @@
 type SignalUnsubscriber = () => void;
 
-export type Signal<EventName extends string, CallbackOptions extends any[] = any[]> = {
-  on: (event: EventName, callback: (...args: CallbackOptions) => any) => SignalUnsubscriber;
-  once: (event: EventName, callback: (...args: CallbackOptions) => any) => SignalUnsubscriber;
-  off: (event: EventName, callback?: (...args: CallbackOptions) => any) => void;
+export type Signal<EventDetail extends any = any> = {
+  subscribe: (callback: (detail: EventDetail) => any) => SignalUnsubscriber;
+  once: (callback: (detail: EventDetail) => any) => SignalUnsubscriber;
+  unsubscribe: (callback?: (detail: EventDetail) => any) => void;
   clear: () => void;
-  emit: (event: EventName, ...extra_options: any[]) => void;
+  emit: (detail: EventDetail) => void;
 };
-export const create_signal = <EventName extends string, CallbackOptions extends any[] = any[]>(eventname: EventName): Signal<EventName, CallbackOptions> => {
+export const create_signal = <EventDetail extends any = any>(): Signal<EventDetail> => {
   let listeners: CallableFunction[] = [];
-  const signal: Signal<EventName> = {
-    on: (event, callback) => {
+  const signal: Signal<EventDetail> = {
+    subscribe: (callback) => {
       listeners.push(callback);
 
-      return () => signal.off(event, callback);
+      return () => signal.unsubscribe(callback);
     },
 
-    once: (event, callback) => {
-      const unsub = signal.on(event, () => {
-        callback();
+    once: (callback) => {
+      const unsub = signal.subscribe((detail) => {
+        callback(detail);
         unsub();
       });
 
       return unsub;
     },
 
-    emit: (event, ...extra_options: CallbackOptions) => {
+    emit: (detail) => {
       listeners.forEach((cb) => {
-        cb(...extra_options);
+        cb(detail);
       });
     },
 
-    off: (event, callback = undefined) => {
+    unsubscribe: (callback = undefined) => {
       if (callback === undefined) {
         listeners = [];
       } else {

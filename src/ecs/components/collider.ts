@@ -25,6 +25,8 @@ export enum CollisionNotifier {
   All = (1 << 6) - 1, // needs to be the number of items (including All) - 1
 }
 
+export type ColliderResolution = "none" | "custom" | "static" | "slide" | "bounce" | "stick" | "absorb" | "soft";
+
 export type ColliderComponent = Box & {
   /**
    *
@@ -44,4 +46,14 @@ export type ColliderComponent = Box & {
    * The type of notification for a collision
    */
   notify: CollisionNotifier;
+
+  resolution: ColliderResolution;
+  /**
+   * A custom collisions handler
+   * returns boolean for whether the collision was handled or ignored
+   */
+  custom_resolution?: (
+    record: QueriedComponentRecord<"collider">,
+    collision: QueriedComponentRecord<"collider">
+  ) => boolean;
 };

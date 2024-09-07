@@ -12,6 +12,7 @@ import tween_test from "./core/test_scenes/tween_test";
 import camera_test from "./core/test_scenes/camera_test";
 import color_test from "./core/test_scenes/color_test";
 import ui_test from "./core/test_scenes/ui_test";
+import collisions_test from "./core/test_scenes/collisions_test";
 
 import { GameTime } from "./core/systems/gametime";
 import { flux } from "flux";
@@ -28,7 +29,7 @@ love.load = (arg: string[]) => {
   game_events.on("start", () => {
     console.log("Starting game...");
     // Start here
-    // Scenes.switch(main_game);
+    Scenes.switch(collisions_test);
   });
 };
 

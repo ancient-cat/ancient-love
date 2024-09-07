@@ -62,7 +62,7 @@ export const box_outersection = (box1: Box, box2: Box) => {
 
   const y_outside = b1_bottom < b2_top || b2_bottom < b1_top;
 
-  return y_outside || x_outside;
+  return y_outside;
 };
 
 export const box_intersection = (box1: Box, box2: Box) => {

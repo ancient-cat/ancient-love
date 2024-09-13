@@ -1,0 +1,41 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+        "game_name": {
+            "type": "string",
+            "description": "The name of your game"
+        },
+        "org_name": {
+            "type": "string",
+            "description": "The name of your organization"
+        },
+        "plist": {
+            "type": "object",
+            "description": "Used to set very specific macos app values"
+        },
+        "platforms": {
+            "type": "array",
+            "items": {
+                "type": "string",
+                "enum": [
+                    "macos",
+                    "win32",
+                    "win64"
+                ]
+            }
+        },
+        "love_version": {
+            "type": "string"
+        },
+        "game_version": {
+            "type": "string"
+        }
+    },
+    "required": [
+        "game_name",
+        "org_name",
+        "platforms",
+        "love_version"
+    ]
+}

@@ -19,6 +19,10 @@
 - [ ] UI
 - [ ] Sound Mixer
 
+### Github action
+
+- [ ] https://github.com/marketplace/actions/love-build
+
 ### Not included, for now
 
 - animations

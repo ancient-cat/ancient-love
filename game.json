@@ -1,0 +1,12 @@
+{
+  "$schema": "./src/core/game_schema.json",
+  "game_name": "YOUR_GAME_NAME",
+  "org_name": "YOUR_COMPANY_NAME",
+  "love_version": "11.5",
+  "platforms": [
+    "macos",
+    "win32",
+    "win64"
+  ],
+  "game_version": "alpha"
+}

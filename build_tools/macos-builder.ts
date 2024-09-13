@@ -49,15 +49,21 @@ export const mac_builder: Builder = async (
   // 3. Modify SuperGame.app/Contents/Info.plist (see below for details)
   await rewrite_plist(game_dot_app, build_args);
 
-  info_log(`Zipping ${game_dot_app} into ${dist_filename}...`);
+  info_log(`Zipping ${game_dot_app} into ${dist_filename}.zip...`);
   // 4. Zip the SuperGame.app folder (e.g. to SuperGame_osx.zip) and distribute it. Enable the -y flag of zip to keep the symlinks.
-  const zipResult = spawnSync(`zip -y -r ${dist_filename} ${game_dot_app}`, {
-    cwd: process.cwd(),
+  const dist_target = path.relative(temp_dir, dist_filename);
+  const command = `zip -y -r ${dist_target}.zip ${path.basename(game_dot_app)}`;
+
+  const zipResult = spawnSync(command, {
+    cwd: temp_dir,
     shell: true,
   });
   if (zipResult.error) {
     error_log(zipResult.error ?? "Failed to zip");
   }
+  // else {
+  //   info_log(kleur.gray(zipResult.stdout.toString()));
+  // }
 };
 
 async function rewrite_plist(game_dot_app: string, build_args: BuildArgs) {

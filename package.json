@@ -23,13 +23,15 @@
     "zip": "zip -9 -r game.love ./build",
     "package:linux": "cat love.exe game.love > game.exe",
     "package:windows": "",
-    "love:build": "tsx ./build_tools/build.ts --platforms"
+    "love:build": "tsx ./build_tools/build.ts --platforms",
+    "love:clean": "rm -fr dist"
   },
   "author": "Rory Duncan",
   "license": "ISC",
   "devDependencies": {
     "@eslint/js": "^9.8.0",
     "@types/eslint__js": "^8.42.3",
+    "@types/folder-hash": "^4.0.4",
     "@types/node": "^22.5.4",
     "@types/plist": "^3.0.5",
     "@types/yargs": "^17.0.33",
@@ -37,6 +39,7 @@
     "concurrently": "^8.2.2",
     "eslint": "^9.8.0",
     "eslint-config-prettier": "^9.1.0",
+    "folder-hash": "^4.0.4",
     "get-love2d": "^1.1.0",
     "kleur": "^4.1.5",
     "love-typescript-definitions": "^11.4.3",

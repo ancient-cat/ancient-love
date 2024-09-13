@@ -1,5 +1,6 @@
 #!/usr/bin/env -S npx tsx
 import yargs from "yargs";
+import { hashElement } from "folder-hash";
 import { hideBin } from "yargs/helpers";
 import { download_love, type Platform } from "get-love2d";
 import { spawnSync } from "child_process";
@@ -10,6 +11,7 @@ import game from "../game.json";
 import { mkdir, copyFile } from "fs/promises";
 import { error_log, info_log, log, success_log } from "./logger";
 import { mac_builder } from "./macos-builder";
+import { win_builder } from "./win-builder";
 
 export type BuildArgs = Omit<typeof game, "$schema">;
 export type Builder = (
@@ -34,6 +36,12 @@ const cli = yargs(hideBin(process.argv))
 
 const argv: BuildArgs = cli.argv as BuildArgs;
 
+const build_hash = (await hashElement("./build", { encoding: "hex" })).hash.toString().substring(0, 6);
+
+if (argv.game_version === "") {
+  argv.game_version = build_hash;
+}
+
 const { platforms, game_name, love_version, game_version } = argv;
 const current_platform = os.platform();
 const love_archive = `${game_name}.love`;
@@ -48,6 +56,7 @@ const cwd = process.cwd();
 // }
 
 info_log(`Building for ${platforms.map((a) => cyan(a)).join(", ")}`);
+info_log(gray(`Build Id: ${build_hash}`));
 
 // First step: Zip the contents of /build into a zip file, with a ".love" extension
 
@@ -92,21 +101,17 @@ for (let download of downloads) {
     error_log(result.error ?? "failed to unzip " + download);
   }
 
-  const ext = platform === "macos" ? "zip" : "exe";
-  const filename = `${game_name.toLowerCase()}_${platform}${game_version === "" ? "" : "-" + game_version}.${ext}`;
+  const filename = `${game_name.toLowerCase()}_${platform}${game_version === "" ? "" : "-" + game_version}`;
+  const final_path = path.join(outdir, filename);
   if (platform === "macos") {
-    const final_path = path.join(outdir, filename);
     await mac_builder(argv, temp_dir, "love.app", love_archive, final_path);
     // result = spawnSync(`cat ${download} ${love_archive} > ${final_path}`, {
     //   cwd,
     //   shell: true,
     // });
   } else if (platform === "win32" || platform === "win64") {
-    // result = spawnSync(`cat ${path.join(download.replace(".zip", ""), "love.exe")} ${love_archive} > ${final_path}`, {
-    //   cwd,
-    //   shell: true,
-    // });
-    error_log(red("TODO"));
+    const unzipped_love = download.replace(path.extname(download), "");
+    await win_builder(argv, temp_dir, unzipped_love, love_archive, final_path);
   }
 
   if (result.error) {
@@ -122,8 +127,9 @@ if (builds === downloads.length) {
 }
 
 function zip_game(filename: string, directory: string): [success: boolean, error: Error | undefined] {
-  const result = spawnSync(`zip -9 -r ${path.join(temp_dir, filename)} ${directory}`, {
-    cwd: process.cwd(),
+  const outfile = path.relative(directory, path.join(temp_dir, filename));
+  const result = spawnSync(`zip -9 -r ${outfile} .`, {
+    cwd: directory,
     shell: true,
   });
 

@@ -1,3 +1,7 @@
 node_modules
 package-lock.json
 build
+game.love
+temp
+dist
+.DS_Store

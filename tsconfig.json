@@ -32,6 +32,9 @@
     // "luaBundle": "build/main.lua",
     // "luaBundleEntry": "src/main.ts",
     "sourceMapTraceback": true,
-    "luaLibImport": "require"
+    "luaLibImport": "require",
+    "noResolvePaths": [
+      "lldebugger"
+    ] // Required so TSTL ignores the missing dependency
   }
 }

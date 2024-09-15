@@ -5,6 +5,7 @@ import * as fs from "node:fs/promises";
 import plist from "plist";
 import kleur from "kleur";
 import { spawnSync } from "node:child_process";
+import { zip_folder } from "./zip";
 
 /**
  *
@@ -20,14 +21,22 @@ export const mac_builder: Builder = async (
   dist_filename
 ) => {
   const love_dot_app = path.join(temp_dir, love_executable_files);
-  const game_dot_app = path.join(temp_dir, `${build_args.game_name}.app`);
+  const macos_temp = path.join(temp_dir, "macos_temp");
+  const game_dot_app = path.join(macos_temp, `${build_args.game_name}.app`);
 
   // 1. Rename love.app to SuperGame.app
   try {
     info_log("Renaming", love_dot_app, "->", game_dot_app);
-    // await fs.copyFile(love_dot_app, game_dot_app);
+
+    // in case this wasn't cleaned out: we remove it
     await fs.rm(game_dot_app, {
       force: true,
+      recursive: true,
+    });
+
+    // we do this inside of another temporary folder because zip will zip the _contents_ of a folder.
+    // so for our zip to contain game.app — we need to zip `temp/macos_temp/`
+    await fs.mkdir(macos_temp, {
       recursive: true,
     });
     await fs.rename(love_dot_app, game_dot_app);
@@ -51,19 +60,14 @@ export const mac_builder: Builder = async (
 
   info_log(`Zipping ${game_dot_app} into ${dist_filename}.zip...`);
   // 4. Zip the SuperGame.app folder (e.g. to SuperGame_osx.zip) and distribute it. Enable the -y flag of zip to keep the symlinks.
-  const dist_target = path.relative(temp_dir, dist_filename);
-  const command = `zip -y -r ${dist_target}.zip ${path.basename(game_dot_app)}`;
+  // const dist_target = path.relative(temp_dir, dist_filename);
+  // const command = `zip -y -r ${dist_target}.zip ${path.basename(game_dot_app)}`;
 
-  const zipResult = spawnSync(command, {
-    cwd: temp_dir,
-    shell: true,
-  });
-  if (zipResult.error) {
-    error_log(zipResult.error ?? "Failed to zip");
+  const error = await zip_folder(macos_temp, `${dist_filename}.zip`);
+
+  if (error) {
+    error_log(error ?? "Failed to zip");
   }
-  // else {
-  //   info_log(kleur.gray(zipResult.stdout.toString()));
-  // }
 };
 
 async function rewrite_plist(game_dot_app: string, build_args: BuildArgs) {

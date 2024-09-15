@@ -1,10 +1,14 @@
 import { blue, cyan, green, magenta, bold, red, underline, gray, white } from "kleur/colors";
 
-const prefix = `${magenta("「Ancient Love 」")}`;
+const prefix = `${magenta("「▲ 」")}`;
+
+export const intro = () => {
+  console.log(prefix, magenta(`Building Ancient Love`));
+};
 
 export const log = console.log;
 export const info_log = (...args: any[]) => {
-  log(prefix, bold(blue("i ")), ...args);
+  log(prefix, blue("i "), ...args);
 };
 
 export const success_log = (...args: any[]) => {

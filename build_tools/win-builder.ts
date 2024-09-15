@@ -1,10 +1,9 @@
 import type { BuildArgs, Builder } from "./build";
 import * as path from "node:path";
-import { error_log, info_log, success_log } from "./logger";
 import * as fs from "node:fs/promises";
-import plist from "plist";
-import kleur from "kleur";
+import { error_log, info_log } from "./logger";
 import { spawnSync } from "node:child_process";
+import { zip_folder } from "./zip";
 
 /**
  * Builds a windows executable of the game
@@ -24,17 +23,12 @@ export const win_builder: Builder = async (
     return;
   }
 
-  const zipResult = spawnSync(`zip -y -j -r ${dist_filename}.zip ${love_executable_files}/`, {
-    shell: true,
-    cwd: process.cwd(),
-  });
+  const error = await zip_folder(love_executable_files, dist_filename);
 
-  if (zipResult.error) {
+  if (error) {
     error_log("Unable to create final zip");
     return;
   }
-
-  //   await fs.cp();
 };
 
 async function create_executable(

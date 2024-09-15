@@ -18,6 +18,16 @@ import { GameTime } from "./core/systems/gametime";
 import { flux } from "flux";
 import main_menu from "./scenes/main_menu";
 
+if (os.getenv("LOCAL_LUA_DEBUGGER_VSCODE") == "1") {
+  console.log("oy?");
+  const lldebugger = require("lldebugger");
+  console.log(lldebugger);
+  lldebugger.start();
+  lldebugger.call(() => {
+    console.log("HII");
+  });
+}
+
 math.randomseed(os.clock());
 love.load = (arg: string[]) => {
   Scenes.switch(main_menu);

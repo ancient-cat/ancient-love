@@ -4,6 +4,7 @@
     "ruschaaf.extended-embedded-languages",
     "christian-kohler.path-intellisense",
     "esbenp.prettier-vscode",
-    "sumneko.lua"
+    "sumneko.lua",
+    "tomblind.local-lua-debugger-vscode"
   ]
 }

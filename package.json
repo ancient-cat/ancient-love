@@ -14,17 +14,17 @@
     "love": "love ./build",
     "clean": "rm -rf ./build",
     "prepare": "npx shx mkdir -p ./build && npx shx mkdir -p ./res && shx cp -R res build/",
-    "build": "tstl",
+    "build": "conc npm:_build -p \"$(npm run get:game_name --silent):build\" -c=#22dda5",
+    "_build": "tstl",
     "hmr": "love ./build --hmr",
-    "watch": "npm run build -- --watch",
-    "dev": "conc npm:watch --names dev -c=#22dda5",
+    "watch": "npm run _build -- --watch",
+    "dev": "conc npm:watch -p \"$(npm run get:game_name --silent):dev\" -c=#22dda5",
     "format": "npx prettier --config=./prettier.config.js . --write",
     "format:check": "npx prettier --config=./prettier.config.js . --check",
     "zip": "zip -9 -r game.love ./build",
-    "package:linux": "cat love.exe game.love > game.exe",
-    "package:windows": "",
     "love:build": "tsx ./build_tools/build.ts --platforms",
-    "love:clean": "rm -fr dist"
+    "love:clean": "rm -fr dist && rm -fr temp",
+    "get:game_name": "npx -y json -f game.json game_name"
   },
   "author": "Rory Duncan",
   "license": "ISC",
@@ -51,7 +51,8 @@
     "typescript": "5.5.2",
     "typescript-eslint": "^8.0.0",
     "typescript-to-lua": "^1.26.2",
-    "yargs": "^17.7.2"
+    "yargs": "^17.7.2",
+    "zip-lib": "^1.0.4"
   },
   "dependencies": {
     "cam11": "file:packages/cam11",

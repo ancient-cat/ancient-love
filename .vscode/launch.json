@@ -16,7 +16,7 @@
       "scriptFiles": [
         "build/**/*"
       ],
-      "stopOnEntry": true
+      // "stopOnEntry": true
     }
   ]
 }

@@ -12,9 +12,9 @@
 - [x] tween
 - [x] color
 - [x] GLSL shader syntax highlighting
+- [x] collision system
 - [ ] controller / input mapping
 - [ ] advanced collisions
-- [ ] collision system
 - [ ] curved geometries / lerp'd things
 - [ ] UI
 - [ ] Sound Mixer
